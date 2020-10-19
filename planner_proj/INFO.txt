@@ -1,0 +1,23 @@
+AUTHOR: Alex Cogelja
+Purpose: Basic familiarity with Django and google cloud
+
+To add a table:
+    1) add class in models.py under pandemic_app
+    2) run python manage.py migrate pandemic_app
+    3) python manage.py makemigrations pandemic_app
+    4) python manage.py migrate pandemic_app
+    5) table is now in google cloud under proj_tables database, table name is pandemic_app_<CLASS NAME>
+
+Dependencies:
+    - psycopg2-binary (can get with pip)
+    - Django
+
+Deploy/Test:
+    - python manage.py runserver
+    - change url to 127.0.0.1:800/pandemic_app/ (default page is changed)
+
+connect to postgres in google cloud shell:
+ - gcloud sql connect project --user=postgres
+ - password is pandemic
+
+Postgres in google cloud shell:
