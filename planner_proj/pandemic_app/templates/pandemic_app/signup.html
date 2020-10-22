@@ -1,0 +1,18 @@
+<html>
+<body>
+    <form name = "form" action = "{% url 'create_account' %}" method = "POST">{% csrf_token %}
+        <input type = "text" name = "user" placeholder="Enter your username"/>
+        <br>
+        <input type = "password" name = "password" placeholder = "password"/>
+        <br>
+        <input type="email" name = "email" placeholder = "email"/>
+        <br>
+        <input type = "number" name = "credit_hours", placeholder="0">
+        <button type="submit" value="OK">Create Account</button>
+    </form>
+
+    <!-- a href="{% url 'create_account' %}">click me to go back to page</a !-->
+
+</body>
+
+</html>
