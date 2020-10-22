@@ -33,8 +33,9 @@ def create_account(request):
             password = MySignUp.cleaned_data['password']
             email = MySignUp.cleaned_data['email']
             credit_hours = MySignUp.cleaned_data['credit_hours']
-            user_inst = UserAccount(username, email, password, credit_hours)
+            user_inst = UserAccount(username=username, email=email, password=password, credit_hours=credit_hours)
             print("attributes:", username, password, email, credit_hours)
+            #UserAccount.objects.raw("Insert Into pandemic_app_useraccount values (username, password, email, credit_hours);")
             user_inst.save()
     else: 
         MySignUp = SignUpForm()
