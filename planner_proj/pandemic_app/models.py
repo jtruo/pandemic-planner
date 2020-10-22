@@ -8,7 +8,7 @@ class Test(models.Model):
     attr = models.TextField()
 
 class UserAccount(models.Model):
-    name = models.TextField()
+    username = models.TextField()
     email = models.TextField()
     password = models.TextField()
-
+    credit_hours = models.IntegerField()
