@@ -12,3 +12,4 @@ class UserAccount(models.Model):
     email = models.TextField()
     password = models.TextField()
     credit_hours = models.IntegerField()
+
