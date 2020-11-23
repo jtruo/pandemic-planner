@@ -35,6 +35,14 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+def add_entries(request):
+    username = "not logged in"
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {
+        
+    }
+    return HttpResponse(template.render(context, request))
+
 def create_account(request):
     username = "Not Entered"
     user_inst = None

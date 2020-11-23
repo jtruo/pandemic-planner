@@ -45,3 +45,17 @@ class EventForm(ModelForm):
         # input_formats to parse HTML5 datetime-local input to datetime field
         self.fields['start_time'].input_formats = ('%Y-%m-%dT%H:%M',)
         self.fields['end_time'].input_formats = ('%Y-%m-%dT%H:%M',)
+
+class CreateLectureForm(forms.Form):
+    due_date = forms.DateField()
+    day = forms.CharField() #date might ultimately be better
+    summary = forms.CharField()
+
+class CreateExamForm(forms.Form):
+    exam_date = forms.DateField() #date time field better usage?
+    class_name = forms.CharField() #will need to convert class name into a class id - use a dropdown
+
+class CreateAssForm(forms.Form):
+    due_date = forms.DateField()
+    date_assigned = forms.DateField()
+    class_name = forms.CharField()
