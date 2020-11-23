@@ -5,5 +5,6 @@ admin.site.register(UserAccount)
 admin.site.register(Class)
 admin.site.register(Event)
 
+
 # Register your models here.
  

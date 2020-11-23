@@ -25,3 +25,13 @@ class Event(models.Model):
     def get_html_url(self):
         url = reverse('event_edit', args=(self.id,))
         return f'<a href="{url}"> {self.title} </a>'
+
+
+class Assignment(models.Model):
+    #assignment_id = models.IntegerField() <- automatically added, can be modified more through the db
+    due_date = models.DateField()
+    date_assigned = models.DateField()
+    class_id = models.IntegerField()
+
+
+    
