@@ -27,11 +27,19 @@ class Event(models.Model):
         return f'<a href="{url}"> {self.title} </a>'
 
 
+#none of these are migrated yet
 class Assignment(models.Model):
     #assignment_id = models.IntegerField() <- automatically added, can be modified more through the db
     due_date = models.DateField()
     date_assigned = models.DateField()
     class_id = models.IntegerField()
 
+class Lecture(models.Model):
+    class_id = models.IntegerField()
+    day = models.TextField()
+    summary = models.TextField()
 
+class Exam(models.Model):
+    class_id = models.IntegerField()
+    exam_date = models.DateField() #maybe date and time field
     
