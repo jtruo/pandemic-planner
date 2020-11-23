@@ -14,7 +14,7 @@ Dependencies:
 
 Deploy/Test:
     - python manage.py runserver
-    - change url to 127.0.0.1:800/pandemic_app/ (default page is changed)
+    - change url to 127.0.0.1:8000/pandemic_app/ (default page is changed)
 
 connect to postgres in google cloud shell:
  - gcloud sql connect project --user=postgres
