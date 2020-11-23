@@ -1,5 +1,5 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from pandemic_app.forms import LoginForm, SignUpForm
 from pandemic_app.models import UserAccount
@@ -14,7 +14,7 @@ from .models import *
 from .utils import Calendar
 from calendar import HTMLCalendar
 import calendar
-
+from .forms import EventForm
 
 
 # Create your views here.
@@ -98,3 +98,16 @@ def next_month(d):
     next_month = last + timedelta(days=1)
     month = 'month=' + str(next_month.year) + '-' + str(next_month.month)
     return month    
+
+def event(request, event_id=None):
+    instance = Event()
+    if event_id:
+        instance = get_object_or_404(Event, pk=event_id)
+    else:
+        instance = Event()
+    
+    form = EventForm(request.POST or None, instance=instance)
+    if request.POST and form.is_valid():
+        form.save()
+        return HttpResponseRedirect(reverse('calendar'))
+    return render(request, 'pandemic_app/event.html', {'form': form})
