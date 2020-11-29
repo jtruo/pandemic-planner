@@ -1,5 +1,6 @@
 <html>
 <body>
+    <p>username if logged in: {{ username }}</p>
     <form name = "form" action = "" method = "POST">{% csrf_token %}
         <input type = "text" name = "username" placeholder="Enter your username"/>
         <br>
@@ -7,7 +8,7 @@
         <br>
         <button type="submit" value="Login"></button>
     </form>
-
+<a href="{% url 'logout'%}">Logout</a>
 </body>
 
 </html>

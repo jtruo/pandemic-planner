@@ -18,12 +18,34 @@ from .forms import EventForm
 
 
 # Create your views here.
+def logout(request):
+    try:
+        del request.session['userid']
+        del request.session['username']
+        del request.session['email']
+        del request.session['credit_hours']
+    except KeyError:
+        pass
+    return HttpResponse("logged out")
 def index(request):
     username = "not logged in"
     if request.method == "POST":
+        print('ayy?')
         MyLoginForm = LoginForm(request.POST)
-        if MyLoginForm.is_valid():
-            username = MyLoginForm.cleaned_data['username']
+        print("form:", MyLoginForm.data)
+        #if MyLoginForm.is_valid():
+        username = MyLoginForm.data['username']
+        pswrd = MyLoginForm.data['password']
+        #user if one matched
+        print("getting user for: ", username, pswrd, "\n")
+        user = UserAccount.objects.all().filter(username=username)
+        if len(user) >= 1:
+            user = user[0]
+        print("userid", user.id)
+        request.session['userid'] = user.id #will be set based on user id paired with username in db
+        request.session['username'] = user.username
+        request.session['email'] = user.email
+        request.session['credit_hours'] = user.credit_hours
     else:
         MyLoginForm = LoginForm()
 
@@ -100,6 +122,7 @@ def create_account(request):
             password = MySignUp.cleaned_data['password']
             email = MySignUp.cleaned_data['email']
             credit_hours = MySignUp.cleaned_data['credit_hours']
+            #we should verify the username is not already in the UserAccounts table
             user_inst = UserAccount(username=username, email=email, password=password, credit_hours=credit_hours)
             print("attributes:", username, password, email, credit_hours)
             #UserAccount.objects.raw("Insert Into pandemic_app_useraccount values (username, password, email, credit_hours);")
