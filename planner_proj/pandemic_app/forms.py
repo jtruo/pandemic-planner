@@ -50,21 +50,20 @@ class CreateLectureForm(forms.Form):
     due_date = forms.DateField()
     class_name = forms.CharField() #date might ultimately be better
     summary = forms.CharField()
-    user_id = forms.IntegerField()
+    
 
 class CreateExamForm(forms.Form):
     exam_date = forms.DateField() #date time field better usage?
     class_name = forms.CharField() #will need to convert class name into a class id - use a dropdown
-    user_id = forms.IntegerField()
+    
 
 class CreateAssForm(forms.Form):
     due_date = forms.DateField()
-    date_assigned = forms.DateField
-    ()
+    date_assigned = forms.DateField()
     class_name = forms.CharField()
     assign_name = forms.CharField()
-    user_id = forms.IntegerField()
+    
 
 class CreateClassForm(forms.Form):
     class_name = forms.CharField()
-    user_id = forms.IntegerField()
+    credits = forms.IntegerField()

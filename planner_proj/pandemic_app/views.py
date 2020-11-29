@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from pandemic_app.forms import LoginForm, SignUpForm, CreateAssForm, CreateExamForm, CreateLectureForm, CreateClassForm
-from pandemic_app.models import UserAccount
+from pandemic_app.models import UserAccount, Class, Lecture, Assignment, Exam
 
 from datetime import datetime, timedelta, date
 from django.shortcuts import render
@@ -15,6 +15,14 @@ from .utils import Calendar
 from calendar import HTMLCalendar
 import calendar
 from .forms import EventForm
+#takes a class name and user_id and queries it to get the users class_id
+def name_to_id(name, userid):
+    c = Class.objects.all().filter(class_name=name, user_id = userid)
+    if len(c) > 0:
+        c = c[0]
+    else:
+        return -1
+    return c.id
 
 
 # Create your views here.
@@ -28,7 +36,12 @@ def logout(request):
         pass
     return HttpResponse("logged out")
 def index(request):
-    username = "not logged in"
+    username = request.session['username']
+    if len(username) > 0:
+        print("username:", username)
+    else:
+        username = "not logged in yet"
+
     if request.method == "POST":
         print('ayy?')
         MyLoginForm = LoginForm(request.POST)
@@ -57,18 +70,31 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+def create(request):
+    template = loader.get_template("pandemic_app/content_manage.html")
+    return HttpResponse(template.render({}, request))
+
 #need views for lecture, exam, and class now
 #all of these might need a username field
 def create_lec(request):
     class_name = "empty"
     date = "empty"
     summary = "empty"
+    userid = request.session['userid']
+    if userid >= 0:
+        print('valid')
+    else:
+        return HttpResponse("not logged in, cannot create lec")
     if request.method == "POST":
         MyLec = CreateLectureForm(request.POST)
-        if MyLec.is_valid():
-            date = MyLec.cleaned_date['due_date']
-            class_name = MyLec.cleaned_data['class_name']
-            summary = MyLec.cleaned_data['summary']
+        date = MyLec.data['duedate']
+        class_name = MyLec.data['classname']
+        class_id = name_to_id(class_name, userid)#we will query db to get class_id via class name
+        if class_id == -1:
+            return HttpResponse("unable to retrive class id for class:", class_name)
+        summary = MyLec.data['summary']
+        c = Lecture(class_id=class_id, day=date, user_id=userid, summary=summary)
+        c.save() #dont save it because we do not properly generate class id
     else:
         MyLec = CreateLectureForm()
     
@@ -78,6 +104,29 @@ def create_lec(request):
         'class_name' : class_name,
         'summary' : summary
     }
+    return HttpResponse(template.render(context, request))
+
+#working!!
+def create_class(request):
+    print('we inny!')
+    class_name = "empty"
+    userid = request.session['userid']
+    if userid >= 0:
+        print('valid')
+    else:
+        return HttpResponse("Not Logged In, cannot create class")
+    if request.method == "POST":
+        MyClass = CreateClassForm(request.POST)
+        name = MyClass.data['classname']
+        cred = MyClass.data['credits']
+        c = Class(class_name=name, credits=cred, user_id=userid)
+        c.save()
+    else:
+        MyClass = CreateClassForm()
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
 
 def create_assign(request):
     assign_name = "empty"

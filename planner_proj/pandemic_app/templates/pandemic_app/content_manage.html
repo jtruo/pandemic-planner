@@ -58,18 +58,18 @@
                 <input type="date" name = "dateass" placeholder = "Date Assigned"/>
                 <br>
                 <input type = "date" name = "duedate", placeholder="Due Date">
-                <button type="submit" value="OK">Create Account</button>
+                <button type="submit" value="OK">Create Assignment</button>
             </form>
         </div>
         <div id="Lecture" class="tabcontent">
             <h3>Lectures</h3>
-            <form name = "form" action = "" method = "POST">{% csrf_token %}
+            <form name = "form" action = "{% url 'create_lec'%}" method = "POST">{% csrf_token %}
                 <input type = "text" name = "classname" placeholder="Class Name"/>
                 <br>
                 <input type = "text" name = "summary" placeholder = "Summary"/>
                 <br>
                 <input type = "date" name = "duedate", placeholder="Due Date">
-                <button type="submit" value="OK">Create Account</button>
+                <button type="submit" value="OK">Create Lecture</button>
             </form>
         </div>
         <div id="Exam" class="tabcontent">
@@ -78,16 +78,16 @@
                 <input type = "text" name = "classname" placeholder = "Class Name"/>
                 <br>
                 <input type="date" name = "date" placeholder = "Date"/>
-                <button type="submit" value="OK">Create Account</button>
+                <button type="submit" value="OK">Create Exam</button>
             </form>
         </div>
         <div id="Class" class="tabcontent">
             <h3>Classes</h3>
-            <form name = "form" action = "" method = "POST">{% csrf_token %}
+            <form name = "form" action = "{% url 'create_class'%}" method = "POST">{% csrf_token %}
                 <input type = "text" name = "classname" placeholder = "Class Name"/>
                 <br>
-                <input type="number" name = "userid" placeholder="{{ user_id }}">
-                <button type="submit" value="OK">Create Account</button>
+                <input type="number" name = "credits" placeholder="3">
+                <button type="submit" value="OK">Create Class</button>
             </form>
         </div>
     </body>

@@ -13,7 +13,8 @@ class UserAccount(models.Model):
 class Class(models.Model):
     class_name = models.TextField()
     credits = models.IntegerField()
-    students = ArrayField(models.TextField())
+    #students = ArrayField(models.TextField())
+    user_id = models.IntegerField()
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
@@ -38,7 +39,7 @@ class Assignment(models.Model):
 
 class Lecture(models.Model):
     class_id = models.IntegerField()
-    day = models.TextField()
+    day = models.DateField()
     summary = models.TextField()
     user_id = models.IntegerField()
 
