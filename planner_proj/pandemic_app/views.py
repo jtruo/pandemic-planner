@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
-from pandemic_app.forms import LoginForm, SignUpForm
+from pandemic_app.forms import LoginForm, SignUpForm, CreateAssForm, CreateExamForm, CreateLectureForm, CreateClassForm
 from pandemic_app.models import UserAccount
 
 from datetime import datetime, timedelta, date
@@ -34,6 +34,53 @@ def index(request):
         'testingvar' : testingvar,
     }
     return HttpResponse(template.render(context, request))
+
+#need views for lecture, exam, and class now
+#all of these might need a username field
+def create_lec(request):
+    class_name = "empty"
+    date = "empty"
+    summary = "empty"
+    if request.method == "POST":
+        MyLec = CreateLectureForm(request.POST)
+        if MyLec.is_valid():
+            date = MyLec.cleaned_date['due_date']
+            class_name = MyLec.cleaned_data['class_name']
+            summary = MyLec.cleaned_data['summary']
+    else:
+        MyLec = CreateLectureForm()
+    
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {
+        'due_date' : date,
+        'class_name' : class_name,
+        'summary' : summary
+    }
+
+def create_assign(request):
+    assign_name = "empty"
+    class_name = "empty"
+    due_date = "empty"
+    date_assigned = "empty"
+    if request.method == "POST":
+        MyAssign = CreateAssForm(request.POST)
+        if MyAssign.is_valid():
+            assign_name = MyAssign.cleaned_data['assign_name']
+            class_name = MyAssign.cleaned_data['class_name']
+            due_date = MyAssign.cleaned_data['due_date']
+            date_assigned = MyAssign.cleaned_data['date_assigned']
+    else:
+        MyAssign = CreateAssForm()
+    
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {
+        'assign_name': assign_name,
+        'class_name' : class_name,
+        'due_date': due_date,
+        'date_assigned': date_assigned,
+    }
+    return HttpResponse(template.render(context, request))
+
 
 def add_entries(request):
     username = "not logged in"

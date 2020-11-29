@@ -8,6 +8,7 @@ from . import views
 urlpatterns = [
 
 path('', views.index, name="index"),
+path('crassign', views.create_assign, name="create_assign"),
 path('signup', views.create_account, name = "create_account"),
 path('calendar', views.CalendarView.as_view(), name='calendar'),
 re_path(r'^event/new/$', views.event, name='event_new'),

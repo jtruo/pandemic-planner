@@ -33,13 +33,16 @@ class Assignment(models.Model):
     due_date = models.DateField()
     date_assigned = models.DateField()
     class_id = models.IntegerField()
+    ass_name = models.TextField()
+    user_id = models.IntegerField()
 
 class Lecture(models.Model):
     class_id = models.IntegerField()
     day = models.TextField()
     summary = models.TextField()
+    user_id = models.IntegerField()
 
 class Exam(models.Model):
     class_id = models.IntegerField()
     exam_date = models.DateField() #maybe date and time field
-    
+    user_id = models.IntegerField()    
