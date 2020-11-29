@@ -123,10 +123,14 @@ def create_account(request):
             email = MySignUp.cleaned_data['email']
             credit_hours = MySignUp.cleaned_data['credit_hours']
             #we should verify the username is not already in the UserAccounts table
-            user_inst = UserAccount(username=username, email=email, password=password, credit_hours=credit_hours)
-            print("attributes:", username, password, email, credit_hours)
-            #UserAccount.objects.raw("Insert Into pandemic_app_useraccount values (username, password, email, credit_hours);")
-            user_inst.save()
+            user = UserAccount.objects.all().filter(username=username)
+            if len(user) == 0:
+                user_inst = UserAccount(username=username, email=email, password=password, credit_hours=credit_hours)
+                print("attributes:", username, password, email, credit_hours)
+                #UserAccount.objects.raw("Insert Into pandemic_app_useraccount values (username, password, email, credit_hours);")
+                user_inst.save()
+            else:
+                return HttpResponse("username already in use!")
     else: 
         MySignUp = SignUpForm()
 
