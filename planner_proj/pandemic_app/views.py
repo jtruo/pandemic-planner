@@ -28,6 +28,12 @@ def name_to_id(name, userid):
 def info(request):
     template = loader.get_template('pandemic_app/info.html')
     userid = request.session['userid']
+    username = "not logged in"
+    if userid >= 0:
+        #userid is okay
+        username = request.session['username']
+    else:
+        userid = -1
     context = { #store all of the variables we use here
         'userid' : userid,
     }
@@ -44,6 +50,7 @@ def logout(request):
     except KeyError:
         pass
     return HttpResponse("logged out")
+    
 def index(request):
     username = request.session['username']
     if len(username) > 0:
@@ -51,10 +58,8 @@ def index(request):
     else:
         username = "not logged in yet"
 
-    if request.method == "POST":
-        print('ayy?')
+    if request.method == "POST":        
         MyLoginForm = LoginForm(request.POST)
-        print("form:", MyLoginForm.data)
         #if MyLoginForm.is_valid():
         username = MyLoginForm.data['username']
         pswrd = MyLoginForm.data['password']
