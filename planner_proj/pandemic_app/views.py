@@ -1,8 +1,8 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
-from pandemic_app.forms import LoginForm, SignUpForm
-from pandemic_app.models import UserAccount
+from pandemic_app.forms import LoginForm, SignUpForm, CreateAssForm, CreateExamForm, CreateLectureForm, CreateClassForm
+from pandemic_app.models import UserAccount, Class, Lecture, Assignment, Exam
 
 from datetime import datetime, timedelta, date
 from django.shortcuts import render
@@ -15,15 +15,50 @@ from .utils import Calendar
 from calendar import HTMLCalendar
 import calendar
 from .forms import EventForm
+#takes a class name and user_id and queries it to get the users class_id
+def name_to_id(name, userid):
+    c = Class.objects.all().filter(class_name=name, user_id = userid)
+    if len(c) > 0:
+        c = c[0]
+    else:
+        return -1
+    return c.id
 
 
 # Create your views here.
+def logout(request):
+    try:
+        del request.session['userid']
+        del request.session['username']
+        del request.session['email']
+        del request.session['credit_hours']
+    except KeyError:
+        pass
+    return HttpResponse("logged out")
 def index(request):
-    username = "not logged in"
+    username = request.session['username']
+    if len(username) > 0:
+        print("username:", username)
+    else:
+        username = "not logged in yet"
+
     if request.method == "POST":
+        print('ayy?')
         MyLoginForm = LoginForm(request.POST)
-        if MyLoginForm.is_valid():
-            username = MyLoginForm.cleaned_data['username']
+        print("form:", MyLoginForm.data)
+        #if MyLoginForm.is_valid():
+        username = MyLoginForm.data['username']
+        pswrd = MyLoginForm.data['password']
+        #user if one matched
+        print("getting user for: ", username, pswrd, "\n")
+        user = UserAccount.objects.all().filter(username=username)
+        if len(user) >= 1:
+            user = user[0]
+        print("userid", user.id)
+        request.session['userid'] = user.id #will be set based on user id paired with username in db
+        request.session['username'] = user.username
+        request.session['email'] = user.email
+        request.session['credit_hours'] = user.credit_hours
     else:
         MyLoginForm = LoginForm()
 
@@ -32,6 +67,97 @@ def index(request):
     context = {
         'username' : username,
         'testingvar' : testingvar,
+    }
+    return HttpResponse(template.render(context, request))
+
+def create(request):
+    template = loader.get_template("pandemic_app/content_manage.html")
+    return HttpResponse(template.render({}, request))
+
+#need views for lecture, exam, and class now
+#all of these might need a username field
+def create_lec(request):
+    class_name = "empty"
+    date = "empty"
+    summary = "empty"
+    userid = request.session['userid']
+    if userid >= 0:
+        print('valid')
+    else:
+        return HttpResponse("not logged in, cannot create lec")
+    if request.method == "POST":
+        MyLec = CreateLectureForm(request.POST)
+        date = MyLec.data['duedate']
+        class_name = MyLec.data['classname']
+        class_id = name_to_id(class_name, userid)#we will query db to get class_id via class name
+        if class_id == -1:
+            return HttpResponse("unable to retrive class id for class:", class_name)
+        summary = MyLec.data['summary']
+        c = Lecture(class_id=class_id, day=date, user_id=userid, summary=summary)
+        c.save() #dont save it because we do not properly generate class id
+    else:
+        MyLec = CreateLectureForm()
+    
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {
+        'due_date' : date,
+        'class_name' : class_name,
+        'summary' : summary
+    }
+    return HttpResponse(template.render(context, request))
+
+#working!!
+def create_class(request):
+    print('we inny!')
+    class_name = "empty"
+    userid = request.session['userid']
+    if userid >= 0:
+        print('valid')
+    else:
+        return HttpResponse("Not Logged In, cannot create class")
+    if request.method == "POST":
+        MyClass = CreateClassForm(request.POST)
+        name = MyClass.data['classname']
+        cred = MyClass.data['credits']
+        c = Class(class_name=name, credits=cred, user_id=userid)
+        c.save()
+    else:
+        MyClass = CreateClassForm()
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
+def create_assign(request):
+    assign_name = "empty"
+    class_name = "empty"
+    due_date = "empty"
+    date_assigned = "empty"
+    if request.method == "POST":
+        MyAssign = CreateAssForm(request.POST)
+        if MyAssign.is_valid():
+            assign_name = MyAssign.cleaned_data['assign_name']
+            class_name = MyAssign.cleaned_data['class_name']
+            due_date = MyAssign.cleaned_data['due_date']
+            date_assigned = MyAssign.cleaned_data['date_assigned']
+    else:
+        MyAssign = CreateAssForm()
+    
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {
+        'assign_name': assign_name,
+        'class_name' : class_name,
+        'due_date': due_date,
+        'date_assigned': date_assigned,
+    }
+    return HttpResponse(template.render(context, request))
+
+
+def add_entries(request):
+    username = "not logged in"
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {
+        
     }
     return HttpResponse(template.render(context, request))
 
@@ -45,10 +171,15 @@ def create_account(request):
             password = MySignUp.cleaned_data['password']
             email = MySignUp.cleaned_data['email']
             credit_hours = MySignUp.cleaned_data['credit_hours']
-            user_inst = UserAccount(username=username, email=email, password=password, credit_hours=credit_hours)
-            print("attributes:", username, password, email, credit_hours)
-            #UserAccount.objects.raw("Insert Into pandemic_app_useraccount values (username, password, email, credit_hours);")
-            user_inst.save()
+            #we should verify the username is not already in the UserAccounts table
+            user = UserAccount.objects.all().filter(username=username)
+            if len(user) == 0:
+                user_inst = UserAccount(username=username, email=email, password=password, credit_hours=credit_hours)
+                print("attributes:", username, password, email, credit_hours)
+                #UserAccount.objects.raw("Insert Into pandemic_app_useraccount values (username, password, email, credit_hours);")
+                user_inst.save()
+            else:
+                return HttpResponse("username already in use!")
     else: 
         MySignUp = SignUpForm()
 

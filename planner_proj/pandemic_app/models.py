@@ -13,7 +13,8 @@ class UserAccount(models.Model):
 class Class(models.Model):
     class_name = models.TextField()
     credits = models.IntegerField()
-    students = ArrayField(models.TextField())
+    #students = ArrayField(models.TextField())
+    user_id = models.IntegerField()
 
 class Event(models.Model):
     title = models.CharField(max_length=200)
@@ -25,3 +26,24 @@ class Event(models.Model):
     def get_html_url(self):
         url = reverse('event_edit', args=(self.id,))
         return f'<a href="{url}"> {self.title} </a>'
+
+
+#none of these are migrated yet
+class Assignment(models.Model):
+    #assignment_id = models.IntegerField() <- automatically added, can be modified more through the db
+    due_date = models.DateField()
+    date_assigned = models.DateField()
+    class_id = models.IntegerField()
+    ass_name = models.TextField()
+    user_id = models.IntegerField()
+
+class Lecture(models.Model):
+    class_id = models.IntegerField()
+    day = models.DateField()
+    summary = models.TextField()
+    user_id = models.IntegerField()
+
+class Exam(models.Model):
+    class_id = models.IntegerField()
+    exam_date = models.DateField() #maybe date and time field
+    user_id = models.IntegerField()    
