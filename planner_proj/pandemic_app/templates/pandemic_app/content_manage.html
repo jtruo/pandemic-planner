@@ -74,7 +74,7 @@
         </div>
         <div id="Exam" class="tabcontent">
             <h3>Exams</h3>
-            <form name = "form" action = "" method = "POST">{% csrf_token %}
+            <form name = "form" action = "{% url 'create_exam' %}" method = "POST">{% csrf_token %}
                 <input type = "text" name = "classname" placeholder = "Class Name"/>
                 <br>
                 <input type="date" name = "date" placeholder = "Date"/>

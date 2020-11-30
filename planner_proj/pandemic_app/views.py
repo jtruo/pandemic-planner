@@ -25,6 +25,21 @@ def name_to_id(name, userid):
     return c.id
 
 
+def info(request):
+    template = loader.get_template('pandemic_app/info.html')
+    userid = request.session['userid']
+    username = "not logged in"
+    if userid >= 0:
+        #userid is okay
+        username = request.session['username']
+    else:
+        userid = -1
+    context = { #store all of the variables we use here
+        'userid' : userid,
+    }
+    return HttpResponse(template.render(context, request))
+
+
 # Create your views here.
 def logout(request):
     try:
@@ -35,6 +50,7 @@ def logout(request):
     except KeyError:
         pass
     return HttpResponse("logged out")
+    
 def index(request):
     username = request.session['username']
     if len(username) > 0:
@@ -42,10 +58,8 @@ def index(request):
     else:
         username = "not logged in yet"
 
-    if request.method == "POST":
-        print('ayy?')
+    if request.method == "POST":        
         MyLoginForm = LoginForm(request.POST)
-        print("form:", MyLoginForm.data)
         #if MyLoginForm.is_valid():
         username = MyLoginForm.data['username']
         pswrd = MyLoginForm.data['password']
@@ -108,11 +122,10 @@ def create_lec(request):
 
 #working!!
 def create_class(request):
-    print('we inny!')
     class_name = "empty"
     userid = request.session['userid']
     if userid >= 0:
-        print('valid')
+        print('user is logged in')
     else:
         return HttpResponse("Not Logged In, cannot create class")
     if request.method == "POST":
@@ -127,19 +140,42 @@ def create_class(request):
     context = {}
     return HttpResponse(template.render(context, request))
 
+def create_exam(request):
+    userid = request.session['userid']
+    if userid >= 0:
+        print('user is logged in')
+    else:
+        return HttpResponse("User not logged in")
+    if request.method == "POST":
+        MyExam = CreateExamForm(request.POST)
+        name = MyExam.data['classname']
+        date = MyExam.data['date']
+        class_id = name_to_id(name, userid)
+        e = Exam(class_id=class_id, user_id=userid, exam_date=date)
+        e.save()
+    else:
+        MyExam = CreateExamForm()
+    template = loader.get_template('pandemic_app/content_manage.html')
+    context = {}
+    return HttpResponse(template.render(context, request))
+
+
 
 def create_assign(request):
     assign_name = "empty"
     class_name = "empty"
     due_date = "empty"
     date_assigned = "empty"
+    user_id = request.session['userid']
     if request.method == "POST":
         MyAssign = CreateAssForm(request.POST)
-        if MyAssign.is_valid():
-            assign_name = MyAssign.cleaned_data['assign_name']
-            class_name = MyAssign.cleaned_data['class_name']
-            due_date = MyAssign.cleaned_data['due_date']
-            date_assigned = MyAssign.cleaned_data['date_assigned']
+        assign_name = MyAssign.data['assname']
+        class_name = MyAssign.data['classname']
+        due_date = MyAssign.data['duedate']
+        date_assigned = MyAssign.data['dateass']
+        class_id = name_to_id(class_name, user_id)
+        a = Assignment(due_date=due_date, date_assigned=date_assigned, user_id=user_id, class_id=class_id, ass_name=assign_name)
+        a.save()
     else:
         MyAssign = CreateAssForm()
     
