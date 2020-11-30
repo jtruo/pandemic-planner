@@ -25,6 +25,15 @@ def name_to_id(name, userid):
     return c.id
 
 
+def info(request):
+    template = loader.get_template('pandemic_app/info.html')
+    userid = request.session['userid']
+    context = { #store all of the variables we use here
+        'userid' : userid,
+    }
+    return HttpResponse(template.render(context, request))
+
+
 # Create your views here.
 def logout(request):
     try:
