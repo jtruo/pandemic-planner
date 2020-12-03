@@ -1,18 +1,33 @@
+{% extends 'pandemic_app/base.html' %}
+{% load static %}
+
+{% block content %}
+
 <html>
 <body>
-    <form name = "form" action = "{% url 'create_account' %}" method = "POST">{% csrf_token %}
-        <input type = "text" name = "user" placeholder="Enter your username"/>
-        <br>
-        <input type = "password" name = "password" placeholder = "password"/>
-        <br>
-        <input type="email" name = "email" placeholder = "email"/>
-        <br>
-        <input type = "number" name = "credit_hours", placeholder="0">
-        <button type="submit" value="OK">Create Account</button>
+    <form name="form" action="{% url 'signup'%}" method="POST" class="col-sm-3 mx-auto mt-5 card p-1 bg-light"> {% csrf_token %}
+    <h2 class="cyan-text mx-auto text-center">Sign Up</h2>
+    <div class="form-group pt-3">
+        <label class="cyan-text" for="usernameInput">Username:</label>
+        <input type="text" name="username" class="form-control" id="usernameInput" placeholder="Username">
+    </div>
+    <div class="form-group">
+        <label class="cyan-text" for="passwordInput">Password:</label>
+        <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password">
+    </div>
+    <div class="form-group">
+        <label class="cyan-text" for="emailInput">Email:</label>
+        <input type="email" name="email" class="form-control" id="emailInput" placeholder="Email">
+    </div>
+    <div class="form-group">
+        <label class="cyan-text" for="numberInput">Credit Hours:</label>
+        <input type="number" name="credit_hours" class="form-control" id="numberInput" placeholder="0">
+    </div>
+    <div class="btn-group d-flex" role="group">
+        <button type="submit" value="OK" class="btn btn-default cyan-bg off-white-text w-100" >Sign Up</button>
+    </div>
     </form>
-
-    <!-- a href="{% url 'create_account' %}">click me to go back to page</a !-->
-
 </body>
-
 </html>
+
+{% endblock %}

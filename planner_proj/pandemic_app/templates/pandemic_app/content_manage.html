@@ -1,3 +1,7 @@
+{% extends 'pandemic_app/base.html' %}
+{% load static %}
+
+{% block content %}
 <html>
     <head>
         <script>
@@ -20,7 +24,7 @@
             .tab {
                 overflow: hidden;
                 background-color: grey;
-                border: 1px solid rgb(73, 73, 73);
+                border-bottom: 1px solid rgb(73, 73, 73);
             }
             .tab button {
                 background-color: inherit;
@@ -42,53 +46,88 @@
         </style>
     </head>
     <body>
-        <div class="tab">
-            <button class="tablinks" onclick="openOpt(type, 'Assignment')">Assignment</button>
-            <button class="tablinks" onclick="openOpt(type, 'Lecture')">Lecture</button>
-            <button class="tablinks" onclick="openOpt(type, 'Exam')">Exam</button>
-            <button class="tablinks" onclick="openOpt(type, 'Class')">Class</button>
+        <div class="tab bg-white">
+            <button class="tablinks charcoal-text" onclick="openOpt(type, 'Assignment')">Assignment</button>
+            <button class="tablinks charcoal-text" onclick="openOpt(type, 'Lecture')">Lecture</button>
+            <button class="tablinks charcoal-text" onclick="openOpt(type, 'Exam')">Exam</button>
+            <button class="tablinks charcoal-text" onclick="openOpt(type, 'Class')">Class</button>
         </div>
         <div id="Assignment" class="tabcontent">
-            <h3>Assignments</h3>
-            <form name = "form" action = "{% url 'create_assign' %}" method = "POST">{% csrf_token %}
-                <input type = "text" name = "assname" placeholder="Assignment Name"/>
-                <br>
-                <input type = "text" name = "classname" placeholder = "Class Name"/>
-                <br>
-                <input type="date" name = "dateass" placeholder = "Date Assigned"/>
-                <br>
-                <input type = "date" name = "duedate", placeholder="Due Date">
-                <button type="submit" value="OK">Create Assignment</button>
+            <form name ="form" action = "{% url 'create_assign' %}" class="col-sm-3 mx-auto mt-5 card p-1 bg-light" method = "POST">{% csrf_token %}
+                <h2 class="cyan-text mx-auto text-center">Assignments</h2>
+                <div class="form-group pt-3">
+                    <label class="cyan-text" for="assignmentInput">Assignment Name:</label>
+                    <input type="text" name="assname" class="form-control" id="assignmentInput" placeholder="Assignment Name">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="classInput">Class Name:</label>
+                    <input type="text" name="classname" class="form-control" id="classInput" placeholder="Class Name">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="dateInput">Date Assigned:</label>
+                    <input type="date" name="dateass" class="form-control" id="dateInput">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="duedateInput">Due Date:</label>
+                    <input type="date" name="duedate" class="form-control" id="duedateInput">
+                </div>
+                <div class="btn-group d-flex" role="group">
+                    <button type="submit" value="OK" class="btn btn-default cyan-bg off-white-text w-100">Create Assignment</button>
+                </div>
             </form>
         </div>
         <div id="Lecture" class="tabcontent">
-            <h3>Lectures</h3>
-            <form name = "form" action = "{% url 'create_lec'%}" method = "POST">{% csrf_token %}
-                <input type = "text" name = "classname" placeholder="Class Name"/>
-                <br>
-                <input type = "text" name = "summary" placeholder = "Summary"/>
-                <br>
-                <input type = "date" name = "duedate", placeholder="Due Date">
-                <button type="submit" value="OK">Create Lecture</button>
+            <form name ="form" action = "{% url 'create_lec' %}" class="col-sm-3 mx-auto mt-5 card p-1 bg-light" method = "POST">{% csrf_token %}
+                <h2 class="cyan-text mx-auto text-center">Lectures</h2>
+                <div class="form-group pt-3">
+                    <label class="cyan-text" for="classInput">Class Name:</label>
+                    <input type="text" name="classname" class="form-control" id="classInput" placeholder="Class Name">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="summaryInput">Summary:</label>
+                    <input type="text" name="summary" class="form-control" id="summaryInput" placeholder="Summary">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="duedateInput">Due Date:</label>
+                    <input type="date" name="duedate" class="form-control" id="duedateInput">
+                </div>
+                <div class="btn-group d-flex" role="group">
+                    <button type="submit" value="OK" class="btn btn-default cyan-bg off-white-text w-100">Create Lecture</button>
+                </div>
             </form>
         </div>
         <div id="Exam" class="tabcontent">
-            <h3>Exams</h3>
-            <form name = "form" action = "{% url 'create_exam' %}" method = "POST">{% csrf_token %}
-                <input type = "text" name = "classname" placeholder = "Class Name"/>
-                <br>
-                <input type="date" name = "date" placeholder = "Date"/>
-                <button type="submit" value="OK">Create Exam</button>
+            <form name ="form" action = "{% url 'create_exam' %}" class="col-sm-3 mx-auto mt-5 card p-1 bg-light" method = "POST">{% csrf_token %}
+                <h2 class="cyan-text mx-auto text-center">Exams</h2>
+                <div class="form-group pt-3">
+                    <label class="cyan-text" for="classInput">Class Name:</label>
+                    <input type="text" name="classname" class="form-control" id="classInput" placeholder="Class Name">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="duedateInput">Due Date:</label>
+                    <input type="date" name="date" class="form-control" id="duedateInput">
+                </div>
+                <div class="btn-group d-flex" role="group">
+                    <button type="submit" value="OK" class="btn btn-default cyan-bg off-white-text w-100">Create Exam</button>
+                </div>
             </form>
         </div>
         <div id="Class" class="tabcontent">
-            <h3>Classes</h3>
-            <form name = "form" action = "{% url 'create_class'%}" method = "POST">{% csrf_token %}
-                <input type = "text" name = "classname" placeholder = "Class Name"/>
-                <br>
-                <input type="number" name = "credits" placeholder="3">
-                <button type="submit" value="OK">Create Class</button>
+            <form name ="form" action = "{% url 'create_class' %}" class="col-sm-3 mx-auto mt-5 card p-1 bg-light" method = "POST">{% csrf_token %}
+                <h2 class="cyan-text mx-auto text-center">Classes</h2>
+                <div class="form-group pt-3">
+                    <label class="cyan-text" for="classInput">Class Name:</label>
+                    <input type="text" name="classname" class="form-control" id="classInput" placeholder="Class Name">
+                </div>
+                <div class="form-group">
+                    <label class="cyan-text" for="numberInput">Credit Hours:</label>
+                    <input type="number" name="credits" class="form-control" id="numberInput" placeholder="3">
+                </div>
+                <div class="btn-group d-flex" role="group">
+                    <button type="submit" value="OK" class="btn btn-default cyan-bg off-white-text w-100">Create Class</button>
+                </div>
             </form>
         </div>
     </body>
 </html>
+{% endblock %}

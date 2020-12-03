@@ -28,7 +28,7 @@ def name_to_id(name, userid):
 def info(request):
     template = loader.get_template('pandemic_app/info.html')
     userid = request.session['userid']
-    username = "not logged in"
+    username = ""
     if userid >= 0:
         #userid is okay
         username = request.session['username']
@@ -39,8 +39,23 @@ def info(request):
     }
     return HttpResponse(template.render(context, request))
 
-
 # Create your views here.
+def index(request):
+    
+    try:
+        username = request.session['username']
+    except KeyError:
+        username = ""
+    if len(username) > 0:
+        print("username:", username)
+
+    template = loader.get_template('pandemic_app/index.html')
+    context = {
+        'username' : username,
+    }
+    return HttpResponse(template.render(context, request))
+
+
 def logout(request):
     try:
         del request.session['userid']
@@ -49,14 +64,16 @@ def logout(request):
         del request.session['credit_hours']
     except KeyError:
         pass
-    return HttpResponse("logged out")
+    return HttpResponseRedirect(reverse('index'))
     
-def index(request):
-    username = request.session['username']
+def login(request):
+    
+    try:
+        username = request.session['username']
+    except KeyError:
+        username = ""
     if len(username) > 0:
         print("username:", username)
-    else:
-        username = "not logged in yet"
 
     if request.method == "POST":        
         MyLoginForm = LoginForm(request.POST)
@@ -73,11 +90,12 @@ def index(request):
         request.session['username'] = user.username
         request.session['email'] = user.email
         request.session['credit_hours'] = user.credit_hours
+        return HttpResponseRedirect(reverse('index'))
     else:
         MyLoginForm = LoginForm()
 
     testingvar = "Testing string"
-    template = loader.get_template('pandemic_app/index.html')
+    template = loader.get_template('pandemic_app/login.html')
     context = {
         'username' : username,
         'testingvar' : testingvar,
@@ -159,8 +177,6 @@ def create_exam(request):
     context = {}
     return HttpResponse(template.render(context, request))
 
-
-
 def create_assign(request):
     assign_name = "empty"
     class_name = "empty"
@@ -187,7 +203,6 @@ def create_assign(request):
         'date_assigned': date_assigned,
     }
     return HttpResponse(template.render(context, request))
-
 
 def add_entries(request):
     username = "not logged in"

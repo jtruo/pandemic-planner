@@ -34,7 +34,7 @@
   }
   
   a {
-    color: #17a2b8;
+    color: #114b5f;
   }
   
 
@@ -63,10 +63,47 @@
   
   .form input, .form select, .form textarea {
     border-radius: 5px;
-    border: 1px solid #17a2b8;
+    border: 1px solid #114b5f;
     outline: none;
     background: none;
     padding: 5px;
     width: 100%;
   }
-  
+
+#brand {
+    color: #114b5f;
+}
+
+.cyan-bg {
+    background-color: #114b5f;
+}
+
+.cyan-text {
+    color: #114b5f;
+}
+
+.off-white-bg {
+    background-color: #f7f6f6;
+}
+
+.off-white-text {
+    color: #f7f6f6;
+}
+
+.charcoal-text {
+  color: #444444;
+}
+
+.navbar {
+ border-bottom:2px solid #444444;
+}
+
+body {
+  padding-bottom: 80px;
+}
+
+.footer {
+  border-top:2px solid #444444;
+  height: 50px;
+  background-color:#ffffff;
+}

@@ -1,15 +1,13 @@
-<html>
-<body>
-    <p>username if logged in: {{ username }}</p>
-    <form name = "form" action = "" method = "POST">{% csrf_token %}
-        <input type = "text" name = "username" placeholder="Enter your username"/>
-        <br>
-        <input type = "password" name = "password" placeholder = "password"/>
-        <br>
-        <button type="submit" value="Login">Login</button>
-    </form>
-<button onclick="location.href = '{% url 'logout'%}'">Logout</button>
-<button onclick="location.href = '{% url 'create'%}'">Add Events!</button>
-</body>
+{% extends 'pandemic_app/base.html'%}
+{% load static %}
 
-</html>
+
+{% block content %}
+<div class="container pt-5 pl-5 pr-5">
+  <div class="jumbotron">
+    <h1 class="cyan-text">Welcome to Pandemic Planner!</h1>
+    <p class="charcoal-text">Use our planner to organize everything related to your courses! Unlike Brightspace, we don't clutter or hide the tasks you need to 
+    complete your courses. All your tasks will be put into one place so that you can quickly find what you need to do.</p>
+  </div>
+</div>
+{% endblock %}
