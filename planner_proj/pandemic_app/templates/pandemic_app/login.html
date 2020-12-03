@@ -1,0 +1,24 @@
+{% extends 'pandemic_app/base.html' %}
+{% load static %}
+
+{% block content %}
+<html>
+<body>
+    
+    <form name="form" action="" method="POST" class="col-sm-3 mx-auto mt-5 card p-1 bg-light"> {% csrf_token %}
+    <h2 class="cyan-text mx-auto text-center">Log In</h2>
+    <div class="form-group pt-3">
+        <label class="cyan-text" for="usernameInput">Username:</label>
+        <input type="text" name="username" class="form-control" id="usernameInput" placeholder="Username">
+    </div>
+    <div class="form-group">
+        <label class="cyan-text" for="passwordInput">Password:</label>
+        <input type="password" name="password" class="form-control" id="passwordInput" placeholder="Password">
+    </div>
+    <div class="btn-group d-flex" role="group">
+        <button type="submit" value="Login" class="btn btn-default cyan-bg off-white-text w-100" >Log In</button>
+    </div>
+    </form>
+</body>
+</html>
+{% endblock %}
