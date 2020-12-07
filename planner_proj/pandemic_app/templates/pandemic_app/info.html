@@ -1,12 +1,17 @@
 {% extends 'pandemic_app/base.html' %}
 {% load static %}
-<html>
-    <head>
-        <title>{{ userid }}'s information page</title>
-    </head>
-    <body>
-        <div id="number of credits enrolled in: ">
 
-        </div>
-    </body>
-</html>
+{% block content %}
+<div class="container pt-5 pl-5 pr-5">
+    <div class="jumbotron">
+        <h1 class="cyan-text"><u>Information Page</u></h1>
+        <br>
+        <p class="cyan-text">Username: <span class="charcoal-text">{{ username }}</span></p>
+        <p class="cyan-text">Credit Hours: <span class="charcoal-text">{{ chours }}</span></p>
+        <p class="cyan-text">Current Classes: <span class="charcoal-text">{{ classes }}</span></p>
+        <p class="cyan-text">Next Exam by Class: <span class="charcoal-text">{{ upcoming_exams | linebreaks }}</span></p>
+        <p class="cyan-text">Next 5 Assignments Due: <span class="charcoal-text">{{ upcoming_ass | linebreaks }}</span></p>
+        <p class="cyan-text">Lectures Today: <span class="charcoal-text">{{ lec_today }}</span></p>
+    </div>
+</div>
+{% endblock %}

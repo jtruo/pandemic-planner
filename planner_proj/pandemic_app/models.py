@@ -13,9 +13,9 @@ class UserAccount(models.Model):
 class Class(models.Model):
     class_name = models.TextField()
     credits = models.IntegerField()
-    #students = ArrayField(models.TextField())
     user_id = models.IntegerField()
 
+# Currently unused
 class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -27,8 +27,6 @@ class Event(models.Model):
         url = reverse('event_edit', args=(self.id,))
         return f'<a href="{url}"> {self.title} </a>'
 
-
-#none of these are migrated yet
 class Assignment(models.Model):
     #assignment_id = models.IntegerField() <- automatically added, can be modified more through the db
     due_date = models.DateField()
@@ -45,5 +43,5 @@ class Lecture(models.Model):
 
 class Exam(models.Model):
     class_id = models.IntegerField()
-    exam_date = models.DateField() #maybe date and time field
+    exam_date = models.DateField() 
     user_id = models.IntegerField()    

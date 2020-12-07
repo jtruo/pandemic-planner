@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views import generic
 from django.utils.safestring import mark_safe
+from django.db import connection
 
 from .models import *
 from .utils import Calendar
@@ -25,6 +26,7 @@ def name_to_id(name, userid):
     return c.id
 
 
+
 def info(request):
     template = loader.get_template('pandemic_app/info.html')
     userid = request.session['userid']
@@ -34,8 +36,62 @@ def info(request):
         username = request.session['username']
     else:
         userid = -1
+
+    cursor = connection.cursor()
+    cursor.execute('Select credit_hours From pandemic_app_useraccount Where username = %s', [username])
+    chours = str(cursor.fetchone())
+    chours = chours.replace('(', '')
+    chours = chours.replace(')', '')
+    chours = chours.replace(',', '')
+
+    cursor.execute('Select class_name From pandemic_app_class Where user_id = %s;', [userid])
+    classes = str(cursor.fetchall())
+    classes = classes.replace('[', '')
+    classes = classes.replace(']', '')
+    classes = classes.replace('\'', '')
+    classes = classes.replace('(', '')
+    classes = classes.replace(')', '')
+    classes = classes.replace(',,', ',')
+
+    cursor.execute('Select c.class_name, MIN(e.exam_date) From pandemic_app_exam e Inner Join pandemic_app_class c On e.class_id = c.id Inner Join pandemic_app_useraccount u On c.user_id = u.id Where u.id = %s Group By c.class_name Having MIN(e.exam_date) >= CURRENT_DATE;', [userid])
+    upcoming_exams = str(cursor.fetchall())
+    upcoming_exams = upcoming_exams.replace('(\'', 'Class: ')
+    upcoming_exams = upcoming_exams.replace('\', datetime.date(', ' Date: ')
+    upcoming_exams = upcoming_exams.replace(', ', '-')
+    upcoming_exams = upcoming_exams.replace('))-', ', \n')
+    upcoming_exams = upcoming_exams.replace('))', '')
+    upcoming_exams = upcoming_exams.replace('[', '')
+    upcoming_exams = upcoming_exams.replace(']', '')
+
+    cursor.execute('Select c.class_name, a.ass_name, a.due_date From pandemic_app_assignment a Inner Join pandemic_app_class c On a.class_id = c.id Inner Join pandemic_app_useraccount u on c.user_id = u.id Where u.id = %s and a.due_date >= CURRENT_DATE Order By a.due_date ASC Limit 5;', [userid])
+    upcoming_ass = str(cursor.fetchall())
+    upcoming_ass = upcoming_ass.replace('(\'', 'Class: ')
+    upcoming_ass = upcoming_ass.replace('\', datetime.date(', ' Due: ')
+    upcoming_ass = upcoming_ass.replace('\', \'', ' Assignment: ')
+    upcoming_ass = upcoming_ass.replace(', ', '-')
+    upcoming_ass = upcoming_ass.replace('))-', ',\n ')
+    upcoming_ass = upcoming_ass.replace('))', '')
+    upcoming_ass = upcoming_ass.replace('[', '')
+    upcoming_ass = upcoming_ass.replace(']', '')
+
+    cursor.execute('Select c.class_name From pandemic_app_lecture l Inner Join pandemic_app_class c On l.class_id = c.id Inner Join pandemic_app_useraccount u On c.user_id = u.id Where u.id = %s and l.day = (Select CURRENT_DATE);', [userid])
+    lec_today = str(cursor.fetchall())
+    if lec_today == '[]':
+        lec_today = 'None'
+    else: 
+        lec_today= lec_today.replace('[', '')
+        lec_today= lec_today.replace(']', '')
+        lec_today= lec_today.replace('(\'', '')
+        lec_today= lec_today.replace('\',)', '')
+
     context = { #store all of the variables we use here
         'userid' : userid,
+        'username' : username,
+        'chours' : chours, 
+        'classes' : classes, 
+        'upcoming_exams' : upcoming_exams,
+        'upcoming_ass' : upcoming_ass,
+        'lec_today' : lec_today,
     }
     return HttpResponse(template.render(context, request))
 
@@ -245,21 +301,27 @@ def create_account(request):
 class CalendarView(generic.ListView):
     model = Event
     template_name = 'pandemic_app/calendar.html'
-
+        
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         # Get the month for the calendar
         d = get_date(self.request.GET.get('month', None))
 
+        # Get user
+        userid = self.request.session.get('userid')
+        if not userid:
+            userid = 0
+
         # Instantiate our calendar class with today's year and date
-        cal = Calendar(d.year, d.month)
+        cal = Calendar(d.year, d.month, userid)
 
         # Call the formatmonth method, which returns our calendar as a table
         html_cal = cal.formatmonth(withyear=True)
         context['calendar'] = mark_safe(html_cal)
         context['prev_month'] = prev_month(d)
         context['next_month'] = next_month(d)
+        
         return context
 
 def get_date(req_day):
